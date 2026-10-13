@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Academic Advisor</title>
+<style>
+ body{font-family:system-ui,sans-serif;max-width:560px;margin:2rem auto;padding:0 1rem;line-height:1.5}
+ label{display:block;margin-top:.8rem;font-size:.9rem}
+ input{width:100%;padding:.5rem;box-sizing:border-box}
+ button{margin-top:1.2rem;padding:.7rem 1.2rem;cursor:pointer}
+ #out{margin-top:1.5rem;padding:1rem;border:1px solid #8884;border-radius:8px;display:none}
+</style></head><body>
+<h1>Academic Advisor</h1>
+<p>Enter your details to get a predicted standing and advice.</p>
+<div id="fields"></div>
+<button id="go">Get advice</button>
+<div id="out"></div>
+<script>
+const F=[["study_hours","Study hours / week",15],["attendance","Attendance (%)",80],
+["prev_gpa","Previous GPA (0-5)",3.5],["assignments","Assignments submitted (%)",75],
+["sleep_hours","Sleep hours / night",7],["extra_hours","Extra-curricular hours / week",5],
+["failed_courses","Failed courses",0]];
+document.getElementById("fields").innerHTML=F.map(([k,l,v])=>
+ `<label>${l}<input id="${k}" type="number" step="any" value="${v}"></label>`).join("");
+document.getElementById("go").onclick=async()=>{
+ const body={};F.forEach(([k])=>body[k]=document.getElementById(k).value);
+ const r=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+ const d=await r.json(),o=document.getElementById("out");o.style.display="block";
+ o.innerHTML=r.ok?`<h2>${d.standing}</h2><p>Confidence: ${(d.confidence*100).toFixed(0)}%</p><ul>${d.advice.map(a=>`<li>${a}</li>`).join("")}</ul>`:`<p>${d.error}</p>`;
+};
+</script></body></html>

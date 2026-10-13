@@ -1,0 +1,4 @@
+{ "recommendations": [
+  "ms-python.python", "ms-python.vscode-pylance", "ms-python.black-formatter",
+  "ms-toolsai.jupyter", "eamodio.gitlens", "GitHub.vscode-pull-request-github"
+] }
